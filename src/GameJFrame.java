@@ -20,10 +20,10 @@ public class GameJFrame extends javax.swing.JFrame {
     private int size = 10;
     private int cellSize = 60;
     
-    private final String wallImgPath = "wall.png";
-    private final String floorImgPath = "floor.png";
-    private final String startImgPath = "kright.png";
-    private final String exitImgPath = "DoorWin.png";
+    private final String wallImgPath = "images/wall.png";
+    private final String floorImgPath = "images/floor.png";
+    private final String startImgPath = "images/kright.png";
+    private final String exitImgPath = "images/DoorWin.png";
     
     private int playerRow = 0;
     private int playerCol = 0;
@@ -57,16 +57,7 @@ public class GameJFrame extends javax.swing.JFrame {
     public GameJFrame() {
         initComponents();
         setUpMazePanel();
-        loadPathfindingAlgorithms();
         this.setLocationRelativeTo(null);
-    }
-    
-    private void loadPathfindingAlgorithms() {
-        cbAlgorithms.removeAllItems();
-        for (ThuatToan algorithm : ThuatToan.values()) {
-            cbAlgorithms.addItem(algorithm.toString());
-        }
-        cbAlgorithms.setSelectedIndex(0);
     }
     
     private void setUpMazePanel() {
@@ -124,14 +115,11 @@ public class GameJFrame extends javax.swing.JFrame {
         btnReset = new javax.swing.JButton();
         btnStart = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
-        cbAlgorithms = new javax.swing.JComboBox<>();
-        lblAlgorithms = new javax.swing.JLabel();
         sliderMazeSize = new javax.swing.JSlider();
         lblMazeSize = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Tìm đường về nhà");
-        setResizable(false);
 
         mazePanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
@@ -193,17 +181,6 @@ public class GameJFrame extends javax.swing.JFrame {
             }
         });
 
-        cbAlgorithms.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        cbAlgorithms.setMaximumRowCount(5);
-        cbAlgorithms.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbAlgorithmsActionPerformed(evt);
-            }
-        });
-
-        lblAlgorithms.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblAlgorithms.setText("Lựa chọn thuật toán");
-
         sliderMazeSize.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
         sliderMazeSize.setMajorTickSpacing(10);
         sliderMazeSize.setMaximum(50);
@@ -230,15 +207,13 @@ public class GameJFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(sliderMazeSize, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblAlgorithms, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnExit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(controlPanelLayout.createSequentialGroup()
                         .addComponent(btnGenerate, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                         .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblMazeSize, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cbAlgorithms, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblMazeSize, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         controlPanelLayout.setVerticalGroup(
@@ -252,11 +227,7 @@ public class GameJFrame extends javax.swing.JFrame {
                 .addComponent(lblMazeSize)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(sliderMazeSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
-                .addComponent(lblAlgorithms)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cbAlgorithms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(65, 65, 65)
+                .addGap(172, 172, 172)
                 .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -314,19 +285,6 @@ public class GameJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnGenerateActionPerformed
 
-    private void cbAlgorithmsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbAlgorithmsActionPerformed
-        // TODO add your handling code here:
-        String selectedAlgorithm = (String) cbAlgorithms.getSelectedItem();
-        
-        for (ThuatToan algorithm : ThuatToan.values()) {
-            if (algorithm.toString().equals(selectedAlgorithm)) {
-                tt = algorithm;
-                break;
-            }
-        }
-        updateUIForSelectedAlgorithm();
-    }//GEN-LAST:event_cbAlgorithmsActionPerformed
-
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnResetActionPerformed
@@ -344,23 +302,6 @@ public class GameJFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnExitActionPerformed
 
-    private void updateUIForSelectedAlgorithm() {
-        switch (tt) {
-            case BFS:
-                // Cập nhật UI cho thuật toán BFS
-                break;
-            case DFS:
-                // Cập nhật UI cho thuật toán DFS
-                break;
-            case ASTAR:
-                // Cập nhật UI cho thuật toán A*
-                break;
-            case HILL_CLIMBING:
-                // Cập nhật UI cho thuật toán Greedy Best-First
-                break;
-        }
-    }
-    
     /**
      * @param args the command line arguments
      */
@@ -401,10 +342,8 @@ public class GameJFrame extends javax.swing.JFrame {
     private javax.swing.JButton btnGenerate;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnStart;
-    private javax.swing.JComboBox<String> cbAlgorithms;
     private javax.swing.JPanel controlPanel;
     private javax.swing.JPanel drawPanel;
-    private javax.swing.JLabel lblAlgorithms;
     private javax.swing.JLabel lblMazeSize;
     private javax.swing.JPanel mazePanel;
     private javax.swing.JSlider sliderMazeSize;

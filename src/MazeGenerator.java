@@ -74,10 +74,6 @@ public class MazeGenerator {
         }
         
         // Tạo mê cung bằng thuật toán DFS
-        // Chọn ngẫu nhiên điểm bắt đầu
-        startRow = random.nextInt(rows);
-        startCol = random.nextInt(cols);
-        
         generateMaze();
         
         // Chọn ngẫu nhiên điểm kết thúc (phải khác với điểm bắt đầu)
@@ -110,7 +106,6 @@ public class MazeGenerator {
     }
       
     private void generateMaze() {
-        // Bắt đầu từ điểm bắt đầu ngẫu nhiên
         grid[startRow][startCol].value = 1; // Đánh dấu là đường đi
         dfs(startRow, startCol);
     }

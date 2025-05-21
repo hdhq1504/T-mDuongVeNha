@@ -1,13 +1,10 @@
 
 import java.awt.Image;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Stack;
+import javax.swing.ImageIcon;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -25,6 +22,7 @@ public class PathFinder {
     private int rows, cols;
     private int startRow, startCol;
     private int exitRow, exitCol;
+    private Image pathImg, visitedImg;
     private List<Node> path;
     private List<Node> exploredNodes;
     
@@ -32,25 +30,13 @@ public class PathFinder {
     public static class Node {
         int row, col;
         Node parent;
-        int g; // Khoảng cách từ điểm bắt đầu
         int h; // Heuristic (ước tính khoảng cách đến đích)
-        int f; // f = g + h
         
         public Node(int row, int col) {
             this.row = row;
             this.col = col;
             this.parent = null;
-            this.g = 0;
             this.h = 0;
-            this.f = 0;
-        }
-        
-        public int getF() {
-            return f;
-        }
-        
-        public int getG() {
-            return g;
         }
         
         public int getH() {
@@ -81,6 +67,18 @@ public class PathFinder {
         // Khởi tạo các biến khác
         this.path = new ArrayList<>();
         this.exploredNodes = new ArrayList<>();
+        
+        loadImages();
+    }
+    
+    private void loadImages() {
+        try {
+            ClassLoader classLoader = getClass().getClassLoader();
+            pathImg = new ImageIcon(classLoader.getResource("images/floor.png")).getImage();
+            visitedImg = new ImageIcon(classLoader.getResource("images/footprint.png")).getImage();
+        } catch (Exception e) {
+            System.err.println("Không thể tải hình ảnh: " + e.getMessage());
+        }
     }
     
     private void createGridCopy() {
@@ -102,233 +100,74 @@ public class PathFinder {
     
     private boolean isTileWalkable(int r, int c, Image[][] tiles) {
         // Logic đơn giản để kiểm tra xem ô có phải là đường đi hay không
-        // Giả sử vị trí (r,c) không phải tường khi tiles[r][c] không phải là wallImg
-        // Đây là một phương pháp đơn giản, có thể cần điều chỉnh dựa trên cách lưu trữ thực tế
         return tiles[r][c] != null && !isWallImage(tiles[r][c]);
     }
     
     private boolean isWallImage(Image img) {
         // So sánh với hình ảnh tường
-        // Thực tế cần kiểm tra nội dung hình ảnh hoặc sử dụng thuộc tính khác để phân biệt
-        // Giả sử hình ảnh tường có kích thước khác với các hình ảnh khác (đây chỉ là giả định)
-        return img.toString().contains("wall"); // Giả định tên file chứa "wall"
-    }
-    
-    // Tìm đường đi bằng thuật toán BFS
-    public List<Node> findPathBFS() {
-        resetSearch();
-        
-        Queue<Node> queue = new LinkedList<>();
-        visited = new boolean[rows][cols];
-        
-        // Thêm điểm bắt đầu vào hàng đợi
-        Node startNode = new Node(startRow, startCol);
-        queue.add(startNode);
-        visited[startRow][startCol] = true;
-        
-        // Các hướng di chuyển có thể (Trên, Phải, Dưới, Trái)
-        int[][] directions = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-        
-        while (!queue.isEmpty()) {
-            Node current = queue.poll();
-            exploredNodes.add(current);
-            
-            // Nếu đã đến đích
-            if (current.row == exitRow && current.col == exitCol) {
-                reconstructPath(current);
-                return path;
-            }
-            
-            // Thử đi theo từng hướng
-            for (int[] dir : directions) {
-                int newRow = current.row + dir[0];
-                int newCol = current.col + dir[1];
-                
-                // Kiểm tra xem ô mới có hợp lệ không
-                if (isValidMove(newRow, newCol) && !visited[newRow][newCol]) {
-                    Node neighbor = new Node(newRow, newCol);
-                    neighbor.parent = current;
-                    
-                    queue.add(neighbor);
-                    visited[newRow][newCol] = true;
-                }
-            }
-        }
-        
-        return Collections.emptyList(); // Không tìm thấy đường đi
-    }
-    
-    // Tìm đường đi bằng thuật toán DFS
-    public List<Node> findPathDFS() {
-        resetSearch();
-        
-        Stack<Node> stack = new Stack<>();
-        visited = new boolean[rows][cols];
-        
-        // Thêm điểm bắt đầu vào ngăn xếp
-        Node startNode = new Node(startRow, startCol);
-        stack.push(startNode);
-        
-        // Các hướng di chuyển có thể (Trên, Phải, Dưới, Trái)
-        int[][] directions = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-        
-        while (!stack.isEmpty()) {
-            Node current = stack.pop();
-            
-            // Nếu đã thăm nút này rồi, bỏ qua
-            if (visited[current.row][current.col]) {
-                continue;
-            }
-            
-            visited[current.row][current.col] = true;
-            exploredNodes.add(current);
-            
-            // Nếu đã đến đích
-            if (current.row == exitRow && current.col == exitCol) {
-                reconstructPath(current);
-                return path;
-            }
-            
-            // Thử đi theo từng hướng
-            for (int[] dir : directions) {
-                int newRow = current.row + dir[0];
-                int newCol = current.col + dir[1];
-                
-                // Kiểm tra xem ô mới có hợp lệ không
-                if (isValidMove(newRow, newCol) && !visited[newRow][newCol]) {
-                    Node neighbor = new Node(newRow, newCol);
-                    neighbor.parent = current;
-                    
-                    stack.push(neighbor);
-                }
-            }
-        }
-        
-        return Collections.emptyList(); // Không tìm thấy đường đi
-    }
-    
-    // Tìm đường đi bằng thuật toán A*
-    public List<Node> findPathAStar() {
-        resetSearch();
-        
-        // Sử dụng PriorityQueue để luôn lấy nút có f = g + h thấp nhất
-        PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparingInt(Node::getF));
-        visited = new boolean[rows][cols];
-        
-        // Thêm điểm bắt đầu vào openSet
-        Node startNode = new Node(startRow, startCol);
-        startNode.g = 0;
-        startNode.h = calculateHeuristic(startRow, startCol);
-        startNode.f = startNode.g + startNode.h;
-        
-        openSet.add(startNode);
-        
-        // Các hướng di chuyển có thể (Trên, Phải, Dưới, Trái)
-        int[][] directions = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
-        
-        while (!openSet.isEmpty()) {
-            Node current = openSet.poll();
-            exploredNodes.add(current);
-            
-            // Nếu đã thăm nút này rồi, bỏ qua
-            if (visited[current.row][current.col]) {
-                continue;
-            }
-            
-            visited[current.row][current.col] = true;
-            
-            // Nếu đã đến đích
-            if (current.row == exitRow && current.col == exitCol) {
-                reconstructPath(current);
-                return path;
-            }
-            
-            // Thử đi theo từng hướng
-            for (int[] dir : directions) {
-                int newRow = current.row + dir[0];
-                int newCol = current.col + dir[1];
-                
-                // Kiểm tra xem ô mới có hợp lệ không
-                if (isValidMove(newRow, newCol) && !visited[newRow][newCol]) {
-                    Node neighbor = new Node(newRow, newCol);
-                    neighbor.parent = current;
-                    
-                    // Tính toán g, h, f cho nút láng giềng
-                    neighbor.g = current.g + 1; // Khoảng cách từ điểm bắt đầu
-                    neighbor.h = calculateHeuristic(newRow, newCol); // Heuristic
-                    neighbor.f = neighbor.g + neighbor.h;
-                    
-                    openSet.add(neighbor);
-                }
-            }
-        }
-        
-        return Collections.emptyList(); // Không tìm thấy đường đi
+        return img.toString().contains("wall");
     }
     
     // Tìm đường đi bằng thuật toán Hill Climbing
-    public List<Node> findPathHillClimbing() {
+    public List<Node> findPath() {
         resetSearch();
         
         visited = new boolean[rows][cols];
-        Node current = new Node(startRow, startCol);
-        current.h = calculateHeuristic(startRow, startCol);
+        Node startNode = new Node(startRow, startCol);
+        startNode.h = calculateHeuristic(startRow, startCol);
+        
+        // Bắt đầu quá trình tìm kiếm từ điểm xuất phát
+        boolean found = hillClimbingWithBacktracking(startNode);
+        
+        if (found) {
+            return path;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+    
+    private boolean hillClimbingWithBacktracking(Node current) {
+        // Đánh dấu nút hiện tại đã thăm
+        visited[current.row][current.col] = true;
+        exploredNodes.add(current);
+        
+        // Nếu đã đến đích
+        if (current.row == exitRow && current.col == exitCol) {
+            reconstructPath(current);
+            return true;
+        }
         
         // Các hướng di chuyển có thể (Trên, Phải, Dưới, Trái)
         int[][] directions = {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
         
-        while (true) {
-            visited[current.row][current.col] = true;
-            exploredNodes.add(current);
+        // Tìm tất cả các nút láng giềng hợp lệ
+        List<Node> neighbors = new ArrayList<>();
+        
+        for (int[] dir : directions) {
+            int newRow = current.row + dir[0];
+            int newCol = current.col + dir[1];
             
-            // Nếu đã đến đích
-            if (current.row == exitRow && current.col == exitCol) {
-                reconstructPath(current);
-                return path;
-            }
-            
-            // Tìm nút láng giềng tốt nhất (có h nhỏ nhất)
-            Node bestNeighbor = null;
-            int bestH = Integer.MAX_VALUE;
-            
-            for (int[] dir : directions) {
-                int newRow = current.row + dir[0];
-                int newCol = current.col + dir[1];
-                
-                // Kiểm tra xem ô mới có hợp lệ không
-                if (isValidMove(newRow, newCol) && !visited[newRow][newCol]) {
-                    int h = calculateHeuristic(newRow, newCol);
-                    
-                    if (h < bestH) {
-                        bestH = h;
-                        if (bestNeighbor == null) {
-                            bestNeighbor = new Node(newRow, newCol);
-                            bestNeighbor.parent = current;
-                            bestNeighbor.h = h;
-                        } else {
-                            bestNeighbor.row = newRow;
-                            bestNeighbor.col = newCol;
-                            bestNeighbor.parent = current;
-                            bestNeighbor.h = h;
-                        }
-                    }
-                }
-            }
-            
-            // Nếu không tìm thấy láng giềng nào tốt hơn hoặc không còn đường đi
-            if (bestNeighbor == null || bestNeighbor.h >= current.h) {
-                // Thử backtrack (quay lui) hoặc dừng thuật toán
-                if (current.parent != null) {
-                    current = current.parent;
-                } else {
-                    break; // Không tìm thấy đường đi
-                }
-            } else {
-                current = bestNeighbor;
+            // Kiểm tra xem ô mới có hợp lệ không và chưa thăm
+            if (isValidMove(newRow, newCol) && !visited[newRow][newCol]) {
+                Node neighbor = new Node(newRow, newCol);
+                neighbor.parent = current;
+                neighbor.h = calculateHeuristic(newRow, newCol);
+                neighbors.add(neighbor);
             }
         }
         
-        return Collections.emptyList(); // Không tìm thấy đường đi
+        // Sắp xếp các láng giềng theo giá trị heuristic (tăng dần)
+        Collections.sort(neighbors, (n1, n2) -> Integer.compare(n1.h, n2.h));
+        
+        // Thử từng láng giềng theo thứ tự heuristic tốt nhất
+        for (Node neighbor : neighbors) {
+            if (hillClimbingWithBacktracking(neighbor)) {
+                return true; // Tìm thấy đường đi
+            }
+        }
+        
+        // Không tìm thấy đường đi từ nút hiện tại, quay lui
+        return false;
     }
     
     // Tính toán heuristic (khoảng cách Manhattan đến đích)
@@ -371,7 +210,7 @@ public class PathFinder {
     }
     
     // Cập nhật hình ảnh với đường đi
-    public Image[][] getPathImages(Image pathImg, Image visitedImg) {
+    public Image[][] getPathImages() {
         Image[][] tiles = maze.getTileImages();
         Image[][] result = new Image[rows][cols];
         
