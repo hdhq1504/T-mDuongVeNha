@@ -3,8 +3,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -19,35 +22,19 @@ public class GameJFrame extends javax.swing.JFrame {
     private MazeGenerator maze;
     private int size = 10;
     private int cellSize = 60;
-    
+    private int score = 0;
+    private int moves = 0;
+    private int timeRemaining;
+    private Timer gameTimer;
+    private boolean hintUsed = false;
+    private List<Collectible> collectibles = new ArrayList<>();
+    private int playerRow = 0;
+    private int playerCol = 0;
+    private boolean gameStarted = false;
     private final String wallImgPath = "images/wall.png";
     private final String floorImgPath = "images/floor.png";
     private final String startImgPath = "images/kright.png";
     private final String exitImgPath = "images/DoorWin.png";
-    
-    private int playerRow = 0;
-    private int playerCol = 0;
-    private boolean gameStarted = false;
-    
-    private enum ThuatToan {
-        BFS("BFS"), 
-        DFS("DFS"),
-        ASTAR("A*"), 
-        HILL_CLIMBING("Leo Đồi");
-        
-        private final String displayName;
-        
-        ThuatToan(String displayName) {
-            this.displayName = displayName;
-        }
-        
-        @Override
-        public String toString() {
-            return displayName;
-        }
-    }
-    
-    private ThuatToan tt = ThuatToan.BFS;
     private final int PANEL_WIDTH = 700;
     private final int PANEL_HEIGHT = 720;
 
