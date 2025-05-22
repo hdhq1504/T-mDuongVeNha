@@ -1,4 +1,6 @@
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,9 +23,16 @@ public class PathFinder {
     private int rows, cols;
     private int startRow, startCol;
     private int exitRow, exitCol;
-    private Image pathImg, visitedImg;
     private List<Node> path;
     private List<Node> exploredNodes;
+    
+    public List<Node> getExploredNodes() {
+        return exploredNodes;
+    }
+
+    public List<Node> getPath() {
+        return path;
+    }
     
     public static class Node {
         int row, col;
@@ -63,18 +72,6 @@ public class PathFinder {
         
         this.path = new ArrayList<>();
         this.exploredNodes = new ArrayList<>();
-        
-        loadImages();
-    }
-    
-    private void loadImages() {
-        try {
-            ClassLoader classLoader = getClass().getClassLoader();
-            pathImg = new ImageIcon(classLoader.getResource("images/floor.png")).getImage();
-            visitedImg = new ImageIcon(classLoader.getResource("images/footprint.png")).getImage();
-        } catch (Exception e) {
-            System.err.println("Không thể tải hình ảnh: " + e.getMessage());
-        }
     }
     
     private void createGridCopy() {
@@ -111,7 +108,8 @@ public class PathFinder {
         
         if (found) {
             return path;
-        } else {
+        } 
+        else {
             return Collections.emptyList();
         }
     }
@@ -176,38 +174,24 @@ public class PathFinder {
         path.clear();
         exploredNodes.clear();
     }
-
-    public List<Node> getExploredNodes() {
-        return exploredNodes;
-    }
-
-    public List<Node> getPath() {
-        return path;
-    }
-
-    public Image[][] getPathImages() {
-        Image[][] tiles = maze.getTileImages();
-        Image[][] result = new Image[rows][cols];
-        for (int r = 0; r < rows; r++) {
-            System.arraycopy(tiles[r], 0, result[r], 0, cols);
-        }
-
+    
+    public void drawPathHighlights(Graphics g, int cellSize) {
+        g.setColor(new Color(173, 216, 230, 128));
         for (Node node : exploredNodes) {
-            if (node.row == startRow && node.col == startCol || 
-                node.row == exitRow && node.col == exitCol) {
-                continue;
+            if (node.row != startRow || node.col != startCol) {
+                if (node.row != exitRow || node.col != exitCol) {
+                    g.fillRect(node.col * cellSize, node.row * cellSize, cellSize, cellSize);
+                }
             }
-            result[node.row][node.col] = visitedImg;
-        }
-
-        for (Node node : path) {
-            if (node.row == startRow && node.col == startCol || 
-                node.row == exitRow && node.col == exitCol) {
-                continue;
-            }
-            result[node.row][node.col] = pathImg;
         }
         
-        return result;
+        g.setColor(new Color(255, 255, 0, 180));
+        for (Node node : path) {
+            if (node.row != startRow || node.col != startCol) {
+                if (node.row != exitRow || node.col != exitCol) {
+                    g.fillRect(node.col * cellSize, node.row * cellSize, cellSize, cellSize);
+                }
+            }
+        }
     }
 }

@@ -46,13 +46,21 @@ public class MazeGenerator {
         return exitCol;
     }
     
-    private static class Cell {
+    public Cell[][] getGrid() {
+        return grid;
+    }
+    
+    public static class Cell {
         int value;
         boolean visited;
         
         Cell() {
             value = 0;
             visited = false;
+        }
+        
+        public int getValue() {
+            return value;
         }
     }
     
@@ -62,6 +70,9 @@ public class MazeGenerator {
         this.cols = cols;
         this.random = new Random();
 
+        this.startRow = 0;
+        this.startCol = 0;
+        
         loadImages(wallImgPath, floorImgPath, startImgPath, exitImgPath);
         
         grid = new Cell[rows][cols];
@@ -212,9 +223,11 @@ public class MazeGenerator {
             for (int c = 0; c < cols; c++) {
                 if (r == startRow && c == startCol) {
                     tileImages[r][c] = startImg; 
-                } else if (r == exitRow && c == exitCol) {
+                } 
+                else if (r == exitRow && c == exitCol) {
                     tileImages[r][c] = exitImg;
-                } else {
+                } 
+                else {
                     tileImages[r][c] = (grid[r][c].value == 1) ? floorImg : wallImg;
                 }
             }
@@ -223,26 +236,5 @@ public class MazeGenerator {
     
     public Image[][] getTileImages() {
         return tileImages;
-    }
-
-    public void debugGrid() {
-        System.out.println("\nMaze Grid (" + rows + "x" + cols + "):");
-        System.out.println("0: Wall, 1: Path");
-        System.out.println("Start: (" + startRow + "," + startCol + ")");
-        System.out.println("Exit: (" + exitRow + "," + exitCol + ")");
-        
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                if (r == startRow && c == startCol) {
-                    System.out.print("S ");
-                } else if (r == exitRow && c == exitCol) {
-                    System.out.print("E ");
-                } else {
-                    System.out.print(grid[r][c].value + " ");
-                }
-            }
-            System.out.println();
-        }
-        System.out.println();
     }
 }
