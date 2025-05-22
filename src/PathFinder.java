@@ -60,10 +60,8 @@ public class PathFinder {
         this.exitRow = maze.getExitRow();
         this.exitCol = maze.getExitCol();
         
-        // Tạo bản sao lưới để tìm đường
         createGridCopy();
         
-        // Khởi tạo các biến khác
         this.path = new ArrayList<>();
         this.exploredNodes = new ArrayList<>();
         
@@ -103,7 +101,6 @@ public class PathFinder {
         return img.toString().contains("wall");
     }
     
-    // Tìm đường đi bằng thuật toán Hill Climbing
     public List<Node> findPath() {
         resetSearch();
         

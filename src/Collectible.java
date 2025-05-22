@@ -32,7 +32,6 @@ public class Collectible {
     public void collect() {
         collected = true;
         score += points;
-        // updateStatusLabel();
     }
 
     public void draw(Graphics g, int cellSize) {
