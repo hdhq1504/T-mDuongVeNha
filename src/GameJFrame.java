@@ -52,17 +52,12 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     /**
      * Creates new form GameJFrame
      */
-    public GameJFrame(String username) { 
+    public GameJFrame() { 
         initComponents();
         setUpMazePanel();
-        this.username = username;
         this.setLocationRelativeTo(null);
         this.addKeyListener(this);
         this.setFocusable(true);
-    }
-    
-    public GameJFrame() {
-        this("Player");
     }
     
     private void setUpMazePanel() {
@@ -88,14 +83,17 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
                         }
                     }
 
-                    for (Collectible collectible : collectibles) {
-                        collectible.draw(g, cellSize);
-                    }
-
+                    // Draw hint path first (before collectibles and player)
                     if (hintUsed && pathFinder != null) {
                         pathFinder.drawPathHighlights(g, cellSize);
                     }
+
+                    // Draw collectibles
+                    for (Collectible collectible : collectibles) {
+                        collectible.draw(g, cellSize);
+                    }
                     
+                    // Draw player last (on top of everything)
                     if (gameStarted && player != null && !gameWon) {
                         try {
                             ClassLoader classLoader = getClass().getClassLoader();
@@ -104,10 +102,6 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
                         } catch (Exception e) {
                             System.err.println("Không thể tải hình ảnh player: " + e.getMessage());
                         }
-                    }
-                    
-                    for (Collectible collectible : collectibles) {
-                        collectible.draw(g, cellSize);
                     }
                 }
             }
@@ -196,13 +190,8 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     }
     
     private void updateGameInfo() {
-        // Cập nhật thông tin game trên UI (cần thêm các label tương ứng)
         timeProgressBar.setValue(timeRemaining);
         timeProgressBar.setString("Time: " + timeRemaining + "s");
-        
-        // Ví dụ: lblScore.setText("Điểm: " + score);
-        // lblMoves.setText("Số bước: " + moves);
-        // lblTime.setText("Thời gian: " + timeRemaining + "s");
     }
     
     private int countRemainingCollectibles() {
@@ -225,13 +214,17 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
 
         String message;
         if (won) {
+            win++; // Increment win count when player wins
+            checkDifficultyProgression(); // Check for level progression
+            
             message = "Chúc mừng! Bạn đã thắng!\n"
                     + "Điểm số: " + score + "\n"
                     + "Số bước đi: " + moves + "\n"
-                    + "Thời gian còn lại: " + timeRemaining + "s"
-                    + "Tổng số màn chơi thắng: " + win;
+                    + "Thời gian còn lại: " + timeRemaining + "s\n"
+                    + "Tổng số màn chơi thắng: " + win + "\n"
+                    + "Cấp độ hiện tại: " + level;
 
-            if (win % 5 == 0) {
+            if ((win - 1) % 5 == 0 && win > 1) { // Check if just leveled up
                 message += "\n\nChúc mừng! Bạn đã lên cấp độ " + level + "!\n"
                         + "Độ khó đã tăng: thời gian giảm, xu nhiều hơn!";
             }
@@ -250,8 +243,8 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         sliderMazeSize.setEnabled(true);
     }
     
-     private void checkDifficultyProgression() {
-        if (win % 5 == 0) {
+    private void checkDifficultyProgression() {
+        if (win % 5 == 0 && win > 0) {
             level++;
             initialTime = Math.max(60, initialTime - 10);
         }
@@ -565,6 +558,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
             playerRow = 0;
             playerCol = 0;
             gameStarted = false;
+            hintUsed = false;
             maze = new MazeGenerator(size, size, wallImgPath, floorImgPath, startImgPath, exitImgPath);
             drawPanel.setPreferredSize(new Dimension(size * cellSize, size * cellSize));
             mazePanel.revalidate();
@@ -663,7 +657,8 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         );
     
         if (choice == JOptionPane.YES_OPTION) {
-            System.exit(0);
+            this.setVisible(false);
+            new DangNhap().setVisible(true);
         }
     }//GEN-LAST:event_btnExitActionPerformed
 
@@ -687,22 +682,38 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         hintUsed = true;
         score = Math.max(0, score - 10);
 
-        pathFinder = new PathFinder(maze);
+        // Find nearest collectible
+        Collectible nearestCollectible = findNearestCollectible();
+        
+        if (nearestCollectible != null) {
+            // Create pathfinder to nearest collectible
+            pathFinder = new PathFinder(maze, player.getRow(), player.getCol(), 
+                                      nearestCollectible.getRow(), nearestCollectible.getCol());
+        } else {
+            // No collectibles left, find path to exit
+            pathFinder = new PathFinder(maze, player.getRow(), player.getCol(), 
+                                      maze.getExitRow(), maze.getExitCol());
+        }
+        
         List<PathFinder.Node> path = pathFinder.findPath();
         
         if (path.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Không tìm thấy đường đi!", "Thông báo", JOptionPane.ERROR_MESSAGE);
         } 
         else {
+            String target = (nearestCollectible != null) ? "xu gần nhất" : "lối ra";
             JOptionPane.showMessageDialog(
                 this, 
-                "Gợi ý đã được hiển thị!\nĐường đi ngắn nhất được tô sáng.\n(Trừ 10 điểm)", 
+                "Gợi ý đã được hiển thị!\nĐường đi đến " + target + " được tô sáng.\n(Trừ 10 điểm)", 
                 "Gợi ý", JOptionPane.INFORMATION_MESSAGE
             );
         }
         
         updateGameInfo();
         drawPanel.repaint();
+        
+        // Ensure focus returns to the main frame for key events
+        this.requestFocus();
     }//GEN-LAST:event_btnHintActionPerformed
 
     /**

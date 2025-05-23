@@ -33,7 +33,8 @@ public class RulesFrame extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        taRule = new javax.swing.JTextArea();
+        btnClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("LUẬT CHƠI");
@@ -42,24 +43,42 @@ public class RulesFrame extends javax.swing.JFrame {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("LUẬT CHƠI");
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jTextArea1.setLineWrap(true);
-        jTextArea1.setRows(5);
-        jTextArea1.setText("1. MỤC TIÊU:\n• Điều khiển nhân vật tìm đường thoát khỏi mê cung trong thời gian quy định\n• Thu thập xu vàng để tăng điểm số\\n\\n\" +\n\n2. THỜI GIAN:\n• Thời gian ban đầu: 120 giây\n• Sau mỗi 5 lần thắng, thời gian sẽ giảm 10 giây để tăng độ khó\n\n3. HỆ THỐNG ĐIỂM:\n• Thu thập xu vàng: +5 điểm\n• Hoàn thành mê cung: +50 điểm\n• Mỗi bước di chuyển: -1 điểm\n• Sử dụng gợi ý: -10 điểm\n\n4. GỢI Ý:\n• Chỉ được sử dụng 1 lần mỗi màn chơi\n\n5. ĐỘ KHÓ TĂNG DẦN:\n• Sau mỗi 5 lần thắng:\n+ Thời gian giảm 10 giây\n+ Số lượng xu tăng thêm để khó thu thập hơn");
-        jTextArea1.setWrapStyleWord(true);
-        jScrollPane2.setViewportView(jTextArea1);
+        taRule.setEditable(false);
+        taRule.setColumns(20);
+        taRule.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        taRule.setLineWrap(true);
+        taRule.setRows(5);
+        taRule.setText("1. MỤC TIÊU:\n• Điều khiển nhân vật tìm đường thoát khỏi mê cung trong thời gian quy định\n• Thu thập xu vàng để tăng điểm số\n\n2. THỜI GIAN:\n• Thời gian ban đầu: 120 giây\n• Sau mỗi 5 lần thắng, thời gian sẽ giảm 10 giây để tăng độ khó\n\n3. HỆ THỐNG ĐIỂM:\n• Thu thập xu vàng: +5 điểm\n• Hoàn thành mê cung: +50 điểm\n• Mỗi bước di chuyển: -1 điểm\n• Sử dụng gợi ý: -10 điểm\n\n4. GỢI Ý:\n• Chỉ được sử dụng 1 lần mỗi màn chơi\n\n5. ĐỘ KHÓ TĂNG DẦN:\n• Sau mỗi 5 lần thắng:\n+ Thời gian giảm 10 giây\n+ Số lượng xu tăng thêm để khó thu thập hơn");
+        taRule.setWrapStyleWord(true);
+        jScrollPane2.setViewportView(taRule);
+
+        btnClose.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        btnClose.setText("ĐÓNG");
+        btnClose.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(244, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(245, 245, 245))
-            .addComponent(jScrollPane2)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 238, Short.MAX_VALUE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(245, 245, 245))))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(244, 244, 244)
+                .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -67,16 +86,25 @@ public class RulesFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        // TODO add your handling code here:
+        dispose();
+    }//GEN-LAST:event_btnCloseActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnClose;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea taRule;
     // End of variables declaration//GEN-END:variables
 }

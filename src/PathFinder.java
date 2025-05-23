@@ -60,6 +60,10 @@ public class PathFinder {
     }
     
     public PathFinder(MazeGenerator maze) {
+        this(maze, maze.getStartRow(), maze.getStartCol(), maze.getExitRow(), maze.getExitCol());
+    }
+    
+    public PathFinder(MazeGenerator maze, int startRow, int startCol, int exitRow, int exitCol) {
         this.maze = maze;
         this.rows = maze.getRows();
         this.cols = maze.getCols();
@@ -76,25 +80,14 @@ public class PathFinder {
     
     private void createGridCopy() {
         grid = new int[rows][cols];
-        Image[][] tiles = maze.getTileImages();
+        MazeGenerator.Cell[][] mazeGrid = maze.getGrid();
         
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                if (r == startRow && c == startCol || r == exitRow && c == exitCol) {
-                    grid[r][c] = 1;
-                } else {
-                    grid[r][c] = (isTileWalkable(r, c, tiles)) ? 1 : 0;
-                }
+                // Use the maze's grid directly to check walkable positions
+                grid[r][c] = mazeGrid[r][c].getValue();
             }
         }
-    }
-    
-    private boolean isTileWalkable(int r, int c, Image[][] tiles) {
-        return tiles[r][c] != null && !isWallImage(tiles[r][c]);
-    }
-    
-    private boolean isWallImage(Image img) {
-        return img.toString().contains("wall");
     }
     
     public List<Node> findPath() {
@@ -176,21 +169,23 @@ public class PathFinder {
     }
     
     public void drawPathHighlights(Graphics g, int cellSize) {
+        // Draw explored nodes (light blue)
         g.setColor(new Color(173, 216, 230, 128));
         for (Node node : exploredNodes) {
-            if (node.row != startRow || node.col != startCol) {
-                if (node.row != exitRow || node.col != exitCol) {
-                    g.fillRect(node.col * cellSize, node.row * cellSize, cellSize, cellSize);
-                }
+            // Skip start and target positions
+            if ((node.row != startRow || node.col != startCol) && 
+                (node.row != exitRow || node.col != exitCol)) {
+                g.fillRect(node.col * cellSize, node.row * cellSize, cellSize, cellSize);
             }
         }
         
+        // Draw optimal path (yellow)
         g.setColor(new Color(255, 255, 0, 180));
         for (Node node : path) {
-            if (node.row != startRow || node.col != startCol) {
-                if (node.row != exitRow || node.col != exitCol) {
-                    g.fillRect(node.col * cellSize, node.row * cellSize, cellSize, cellSize);
-                }
+            // Skip start and target positions to avoid covering them
+            if ((node.row != startRow || node.col != startCol) && 
+                (node.row != exitRow || node.col != exitCol)) {
+                g.fillRect(node.col * cellSize, node.row * cellSize, cellSize, cellSize);
             }
         }
     }

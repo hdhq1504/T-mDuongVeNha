@@ -11,18 +11,20 @@ public class Player {
     
     public void move(String direction, int maxRow, int maxCol) {
         this.currentDirection = direction;
+        // Note: The movement validation should be done in GameJFrame
+        // This method only updates the direction and position
         switch (direction) {
             case "up":
-                if (row > 0) row--;
+                row--;
                 break;
             case "down":
-                if (row < maxRow - 1) row++;
+                row++;
                 break;
             case "left":
-                if (col > 0) col--;
+                col--;
                 break;
             case "right":
-                if (col < maxCol - 1) col++;
+                col++;
                 break;
         }
     }
