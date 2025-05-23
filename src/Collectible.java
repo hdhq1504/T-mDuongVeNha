@@ -1,4 +1,3 @@
-
 import java.awt.Graphics;
 import java.awt.Image;
 
@@ -38,5 +37,21 @@ public class Collectible {
         if (!collected) {
             g.drawImage(image, col * cellSize, row * cellSize, cellSize, cellSize, null);
         }
+    }
+    
+    public boolean isCollected() {
+        return collected;
+    }
+    
+    public int getRow() {
+        return row;
+    }
+    
+    public int getCol() {
+        return col;
+    }
+    
+    public int getPoints() {
+        return points;
     }
 }

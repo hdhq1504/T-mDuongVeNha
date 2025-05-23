@@ -30,6 +30,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     private int score = 0;
     private int moves = 0;
     private int timeRemaining = 120;
+    private int initialTime = 120;
     private Timer gameTimer;
     private boolean hintUsed = false;
     private List<Collectible> collectibles = new ArrayList<>();
@@ -37,6 +38,10 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     private int playerCol = 0;
     private boolean gameStarted = false;
     private boolean gameWon = false;
+    private String username;
+    private int win = 0;
+    private int level = 1;
+    
     private final String wallImgPath = "images/wall.png";
     private final String floorImgPath = "images/floor.png";
     private final String startImgPath = "images/kright.png";
@@ -47,12 +52,17 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     /**
      * Creates new form GameJFrame
      */
-    public GameJFrame() {
+    public GameJFrame(String username) { 
         initComponents();
         setUpMazePanel();
+        this.username = username;
         this.setLocationRelativeTo(null);
         this.addKeyListener(this);
         this.setFocusable(true);
+    }
+    
+    public GameJFrame() {
+        this("Player");
     }
     
     private void setUpMazePanel() {
@@ -119,7 +129,9 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     
     private void generateCollectibles() {
         collectibles.clear();
-        int numCollectibles = Math.max(3, size / 3);
+        int baseCollectibles = Math.max(3, size / 3);
+        int bonusCollectibles = (level - 1) * 2;
+        int numCollectibles = baseCollectibles + bonusCollectibles;
 
         for (int i = 0; i < numCollectibles; i++) {
             int r, c;
@@ -133,11 +145,13 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
                 }
             } while ((r == maze.getStartRow() && c == maze.getStartCol())
                     || (r == maze.getExitRow() && c == maze.getExitCol())
-                    || !isWalkablePosition(r, c));
+                    || !isWalkablePosition(r, c)
+                    || isCollectibleAt(r, c));
 
             if (isWalkablePosition(r, c)
                     && !(r == maze.getStartRow() && c == maze.getStartCol())
-                    && !(r == maze.getExitRow() && c == maze.getExitCol())) {
+                    && !(r == maze.getExitRow() && c == maze.getExitCol())
+                    && !isCollectibleAt(r, c)) {
                 try {
                     ClassLoader classLoader = getClass().getClassLoader();
                     Image collectibleImg = new ImageIcon(classLoader.getResource("images/coin.png")).getImage();
@@ -147,6 +161,15 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
                 }
             }
         }
+    }
+    
+    private boolean isCollectibleAt(int row, int col) {
+        for (Collectible collectible : collectibles) {
+            if (collectible.isAt(row, col)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     private boolean isWalkablePosition(int row, int col) {
@@ -182,6 +205,16 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         // lblTime.setText("Thời gian: " + timeRemaining + "s");
     }
     
+    private int countRemainingCollectibles() {
+        int count = 0;
+        for (Collectible collectible : collectibles) {
+            if (!collectible.isCollected()) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
     private void gameOver(boolean won) {
         gameStarted = false;
         gameWon = won;
@@ -195,8 +228,15 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
             message = "Chúc mừng! Bạn đã thắng!\n"
                     + "Điểm số: " + score + "\n"
                     + "Số bước đi: " + moves + "\n"
-                    + "Thời gian còn lại: " + timeRemaining + "s";
-        } else {
+                    + "Thời gian còn lại: " + timeRemaining + "s"
+                    + "Tổng số màn chơi thắng: " + win;
+
+            if (win % 5 == 0) {
+                message += "\n\nChúc mừng! Bạn đã lên cấp độ " + level + "!\n"
+                        + "Độ khó đã tăng: thời gian giảm, xu nhiều hơn!";
+            }
+        } 
+        else {
             message = "Game Over!\n"
                     + "Hết thời gian rồi!\n"
                     + "Điểm số cuối: " + score;
@@ -208,6 +248,13 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         btnStart.setEnabled(true);
         btnGenerate.setEnabled(true);
         sliderMazeSize.setEnabled(true);
+    }
+    
+     private void checkDifficultyProgression() {
+        if (win % 5 == 0) {
+            level++;
+            initialTime = Math.max(60, initialTime - 10);
+        }
     }
 
     @Override
@@ -289,6 +336,24 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
                 break;
             }
         }
+    }
+    
+    private Collectible findNearestCollectible() {
+        Collectible nearest = null;
+        int minDistance = Integer.MAX_VALUE;
+        
+        for (Collectible collectible : collectibles) {
+            if (!collectible.isCollected()) {
+                int distance = Math.abs(collectible.getRow() - player.getRow()) + 
+                              Math.abs(collectible.getCol() - player.getCol());
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearest = collectible;
+                }
+            }
+        }
+        
+        return nearest;
     }
     
     /**
