@@ -64,7 +64,7 @@ public class MazeGenerator {
         }
     }
     
-    public MazeGenerator(int rows, int cols, String wallImgPath, String floorImgPath, 
+    public MazeGenerator(int rows, int cols, String wallImgPath, String floorImgPath,
             String startImgPath, String exitImgPath) throws IOException {
         this.rows = rows;
         this.cols = cols;
@@ -72,9 +72,11 @@ public class MazeGenerator {
 
         this.startRow = 0;
         this.startCol = 0;
-        
+        this.exitRow = rows - 1;
+        this.exitCol = cols - 1;
+
         loadImages(wallImgPath, floorImgPath, startImgPath, exitImgPath);
-        
+
         grid = new Cell[rows][cols];
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
@@ -84,11 +86,7 @@ public class MazeGenerator {
 
         generateMaze();
 
-        do {
-            exitRow = random.nextInt(rows);
-            exitCol = random.nextInt(cols);
-        } while (exitRow == startRow && exitCol == startCol);
-
+        // Ensure exit position is walkable
         grid[exitRow][exitCol].value = 1;
 
         ensurePathToExit();
@@ -111,7 +109,13 @@ public class MazeGenerator {
       
     private void generateMaze() {
         grid[startRow][startCol].value = 1;
+        grid[exitRow][exitCol].value = 1;
+
         dfs(startRow, startCol);
+
+        if (!grid[exitRow][exitCol].visited) {
+            connectToMaze(exitRow, exitCol);
+        }
     }
     
     private void dfs(int r, int c) {
@@ -174,27 +178,44 @@ public class MazeGenerator {
     }
     
     private void connectToMaze(int r, int c) {
+        if (r < 0 || r >= rows || c < 0 || c >= cols) {
+            return;
+        }
+
+        // Mark this cell as walkable and visited
+        grid[r][c].value = 1;
+        grid[r][c].visited = true;
+
         int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-        
+
+        // Check if we're already connected to the maze
         for (int[] dir : directions) {
             int newR = r + dir[0];
             int newC = c + dir[1];
-            
-            if (newR >= 0 && newR < rows && newC >= 0 && newC < cols 
-                    && grid[newR][newC].value == 1 
-                    && !(newR == exitRow && newC == exitCol)) {
-                return;
+
+            if (newR >= 0 && newR < rows && newC >= 0 && newC < cols
+                    && grid[newR][newC].value == 1 && grid[newR][newC].visited) {
+                return; // Already connected to visited maze
             }
         }
-        
-        int[] dir = directions[random.nextInt(directions.length)];
-        int newR = r + dir[0];
-        int newC = c + dir[1];
-        
-        if (newR >= 0 && newR < rows && newC >= 0 && newC < cols 
-                && !(newR == exitRow && newC == exitCol)) {
-            grid[newR][newC].value = 1;
-            connectToMaze(newR, newC);
+
+        // If not connected, create a path to connect
+        shuffleArray(directions);
+        for (int[] dir : directions) {
+            int newR = r + dir[0];
+            int newC = c + dir[1];
+
+            if (newR >= 0 && newR < rows && newC >= 0 && newC < cols) {
+                if (grid[newR][newC].visited) {
+                    // Found connection to existing maze
+                    return;
+                } else {
+                    // Create path towards maze
+                    grid[newR][newC].value = 1;
+                    connectToMaze(newR, newC);
+                    return;
+                }
+            }
         }
     }
     

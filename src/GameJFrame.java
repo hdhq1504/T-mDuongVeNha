@@ -25,7 +25,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     private MazeGenerator maze;
     private Player player;
     private PathFinder pathFinder;
-    private int size = 10;
+    private int size = 50;
     private int cellSize = 60;
     private int score = 0;
     private int moves = 0;
@@ -44,7 +44,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     
     private final String wallImgPath = "images/wall.png";
     private final String floorImgPath = "images/floor.png";
-    private final String startImgPath = "images/kright.png";
+    private final String startImgPath = "";
     private final String exitImgPath = "images/DoorWin.png";
     private final int PANEL_WIDTH = 700;
     private final int PANEL_HEIGHT = 720;
@@ -82,18 +82,15 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
                             }
                         }
                     }
-
-                    // Draw hint path first (before collectibles and player)
-                    if (hintUsed && pathFinder != null) {
+                    
+                    if (pathFinder != null) {
                         pathFinder.drawPathHighlights(g, cellSize);
                     }
-
-                    // Draw collectibles
+                    
                     for (Collectible collectible : collectibles) {
                         collectible.draw(g, cellSize);
                     }
                     
-                    // Draw player last (on top of everything)
                     if (gameStarted && player != null && !gameWon) {
                         try {
                             ClassLoader classLoader = getClass().getClassLoader();
@@ -119,7 +116,6 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         int cellHeight = PANEL_HEIGHT / size;
         cellSize = Math.min(cellWidth, cellHeight);
     }
-
     
     private void generateCollectibles() {
         collectibles.clear();
@@ -190,18 +186,8 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     }
     
     private void updateGameInfo() {
+        timeProgressBar.setMaximum(initialTime);
         timeProgressBar.setValue(timeRemaining);
-        timeProgressBar.setString("Time: " + timeRemaining + "s");
-    }
-    
-    private int countRemainingCollectibles() {
-        int count = 0;
-        for (Collectible collectible : collectibles) {
-            if (!collectible.isCollected()) {
-                count++;
-            }
-        }
-        return count;
     }
     
     private void gameOver(boolean won) {
@@ -240,13 +226,12 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
 
         btnStart.setEnabled(true);
         btnGenerate.setEnabled(true);
-        sliderMazeSize.setEnabled(true);
     }
     
     private void checkDifficultyProgression() {
         if (win % 5 == 0 && win > 0) {
             level++;
-            initialTime = Math.max(60, initialTime - 10);
+            initialTime = Math.max(10, initialTime - 10);
         }
     }
 
@@ -365,8 +350,6 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         btnReset = new javax.swing.JButton();
         btnStart = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
-        sliderMazeSize = new javax.swing.JSlider();
-        lblMazeSize = new javax.swing.JLabel();
         btnHint = new javax.swing.JButton();
         lblTimer = new javax.swing.JLabel();
         timeProgressBar = new javax.swing.JProgressBar();
@@ -434,24 +417,6 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
             }
         });
 
-        sliderMazeSize.setFont(new java.awt.Font("Segoe UI", 0, 13)); // NOI18N
-        sliderMazeSize.setMajorTickSpacing(10);
-        sliderMazeSize.setMaximum(50);
-        sliderMazeSize.setMinimum(10);
-        sliderMazeSize.setMinorTickSpacing(5);
-        sliderMazeSize.setPaintLabels(true);
-        sliderMazeSize.setPaintTicks(true);
-        sliderMazeSize.setSnapToTicks(true);
-        sliderMazeSize.setValue(0);
-        sliderMazeSize.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                sliderMazeSizeStateChanged(evt);
-            }
-        });
-
-        lblMazeSize.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
-        lblMazeSize.setText("Kích thước mê cung");
-
         btnHint.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         btnHint.setText("Gợi ý");
         btnHint.addActionListener(new java.awt.event.ActionListener() {
@@ -476,13 +441,11 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
             .addGroup(controlPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sliderMazeSize, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
                     .addComponent(btnExit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(controlPanelLayout.createSequentialGroup()
                         .addComponent(btnGenerate, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                         .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lblMazeSize, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(controlPanelLayout.createSequentialGroup()
                         .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -504,11 +467,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnGenerate, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37)
-                .addComponent(lblMazeSize)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(sliderMazeSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
+                .addGap(151, 151, 151)
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnHint, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -540,17 +499,6 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void sliderMazeSizeStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sliderMazeSizeStateChanged
-        // TODO add your handling code here:
-        size = sliderMazeSize.getValue();
-        lblMazeSize.setText("Kích thước mê cung: " + size + "x" + size);
-        calculateCellSize();
-        setUpMazePanel();
-        if (maze != null) {
-            mazePanel.repaint();
-        }
-    }//GEN-LAST:event_sliderMazeSizeStateChanged
 
     private void btnGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateActionPerformed
         // TODO add your handling code here:
@@ -586,7 +534,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
             gameWon = false;
             score = 0;
             moves = 0;
-            timeRemaining = 120;
+            timeRemaining = initialTime;
             hintUsed = false;
             player = null;
             pathFinder = null;
@@ -594,7 +542,6 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
 
             btnStart.setEnabled(true);
             btnGenerate.setEnabled(true);
-            sliderMazeSize.setEnabled(true);
 
             updateGameInfo();
             drawPanel.repaint();
@@ -619,20 +566,16 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         gameWon = false;
         score = 0;
         moves = 0;
-        timeRemaining = 120;
+        timeRemaining = initialTime;
         hintUsed = false;
         
         player = new Player(maze.getStartRow(), maze.getStartCol());
-
         pathFinder = new PathFinder(maze);
-
         generateCollectibles();
-
         startGameTimer();
 
         btnStart.setEnabled(false);
         btnGenerate.setEnabled(false);
-        sliderMazeSize.setEnabled(false);
 
         updateGameInfo();
         drawPanel.repaint();
@@ -642,8 +585,8 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         JOptionPane.showMessageDialog(
             this, 
             "Game bắt đầu!\nSử dụng các phím mũi tên để di chuyển\n" +
-            "Tìm đường đến cửa ra trong thời gian quy định!", 
-            "Bắt đầu game", 
+            "Tìm đường đến cửa ra trong thời gian quy định!",
+            "Bắt đầu game",
             JOptionPane.INFORMATION_MESSAGE
         );
     }//GEN-LAST:event_btnStartActionPerformed
@@ -670,7 +613,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         }
         
         if (hintUsed) {
-            JOptionPane.showMessageDialog(this, "Bạn đã sử dụng gợi ý rồi!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Bạn đã hết lượt sử dụng gợi ý!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
@@ -681,38 +624,24 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
 
         hintUsed = true;
         score = Math.max(0, score - 10);
-
-        // Find nearest collectible
-        Collectible nearestCollectible = findNearestCollectible();
         
-        if (nearestCollectible != null) {
-            // Create pathfinder to nearest collectible
-            pathFinder = new PathFinder(maze, player.getRow(), player.getCol(), 
-                                      nearestCollectible.getRow(), nearestCollectible.getCol());
-        } else {
-            // No collectibles left, find path to exit
-            pathFinder = new PathFinder(maze, player.getRow(), player.getCol(), 
-                                      maze.getExitRow(), maze.getExitCol());
-        }
+        pathFinder = new PathFinder(maze, player.getRow(), player.getCol(), maze.getExitRow(), maze.getExitCol());
         
         List<PathFinder.Node> path = pathFinder.findPath();
         
         if (path.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Không tìm thấy đường đi!", "Thông báo", JOptionPane.ERROR_MESSAGE);
-        } 
+        }
         else {
-            String target = (nearestCollectible != null) ? "xu gần nhất" : "lối ra";
             JOptionPane.showMessageDialog(
-                this, 
-                "Gợi ý đã được hiển thị!\nĐường đi đến " + target + " được tô sáng.\n(Trừ 10 điểm)", 
+                this,
+                "Gợi ý đã được hiển thị!\nĐường đi đến lối ra được tô sáng.\n(Trừ 10 điểm)", 
                 "Gợi ý", JOptionPane.INFORMATION_MESSAGE
             );
         }
         
         updateGameInfo();
         drawPanel.repaint();
-        
-        // Ensure focus returns to the main frame for key events
         this.requestFocus();
     }//GEN-LAST:event_btnHintActionPerformed
 
@@ -759,10 +688,8 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     private javax.swing.JButton btnStart;
     private javax.swing.JPanel controlPanel;
     private javax.swing.JPanel drawPanel;
-    private javax.swing.JLabel lblMazeSize;
     private javax.swing.JLabel lblTimer;
     private javax.swing.JPanel mazePanel;
-    private javax.swing.JSlider sliderMazeSize;
     private javax.swing.JProgressBar timeProgressBar;
     // End of variables declaration//GEN-END:variables
 

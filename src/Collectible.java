@@ -14,7 +14,6 @@ public class Collectible {
     private int row, col;
     private Image image;
     private int points;
-    private int score = 0;
     private boolean collected = false;
 
     public Collectible(int row, int col, Image image, int points) {
@@ -30,7 +29,6 @@ public class Collectible {
 
     public void collect() {
         collected = true;
-        score += points;
     }
 
     public void draw(Graphics g, int cellSize) {

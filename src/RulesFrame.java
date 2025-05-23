@@ -45,10 +45,10 @@ public class RulesFrame extends javax.swing.JFrame {
 
         taRule.setEditable(false);
         taRule.setColumns(20);
-        taRule.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        taRule.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         taRule.setLineWrap(true);
         taRule.setRows(5);
-        taRule.setText("1. MỤC TIÊU:\n• Điều khiển nhân vật tìm đường thoát khỏi mê cung trong thời gian quy định\n• Thu thập xu vàng để tăng điểm số\n\n2. THỜI GIAN:\n• Thời gian ban đầu: 120 giây\n• Sau mỗi 5 lần thắng, thời gian sẽ giảm 10 giây để tăng độ khó\n\n3. HỆ THỐNG ĐIỂM:\n• Thu thập xu vàng: +5 điểm\n• Hoàn thành mê cung: +50 điểm\n• Mỗi bước di chuyển: -1 điểm\n• Sử dụng gợi ý: -10 điểm\n\n4. GỢI Ý:\n• Chỉ được sử dụng 1 lần mỗi màn chơi\n\n5. ĐỘ KHÓ TĂNG DẦN:\n• Sau mỗi 5 lần thắng:\n+ Thời gian giảm 10 giây\n+ Số lượng xu tăng thêm để khó thu thập hơn");
+        taRule.setText("1. MỤC TIÊU:\n• Tìm đường thoát khỏi mê cung trong thời gian quy định.\n• Thu thập xu vàng để tăng điểm số (thu thập càng nhiều càng tốt).\n\n2. THỜI GIAN:\n• Thời gian ban đầu: 2 phút.\n• Giảm 10 giây sau mỗi 5 lần thắng để tăng độ khó.\n\n3. HỆ THỐNG ĐIỂM:\n• Thu thập xu vàng: +5 điểm.\n• Hoàn thành mê cung: +50 điểm.\n• Sử dụng gợi ý: -10 điểm.\n\n4. GỢI Ý: \n• Chỉ được sử dụng 1 lần mỗi màn chơi.");
         taRule.setWrapStyleWord(true);
         jScrollPane2.setViewportView(taRule);
 
@@ -86,7 +86,7 @@ public class RulesFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 440, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnClose, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())

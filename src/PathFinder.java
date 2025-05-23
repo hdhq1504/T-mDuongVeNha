@@ -67,10 +67,10 @@ public class PathFinder {
         this.maze = maze;
         this.rows = maze.getRows();
         this.cols = maze.getCols();
-        this.startRow = maze.getStartRow();
-        this.startCol = maze.getStartCol();
-        this.exitRow = maze.getExitRow();
-        this.exitCol = maze.getExitCol();
+        this.startRow = startRow;
+        this.startCol = startCol;
+        this.exitRow = exitRow;
+        this.exitCol = exitCol;
         
         createGridCopy();
         
