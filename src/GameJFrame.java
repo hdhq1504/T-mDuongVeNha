@@ -187,7 +187,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     
     private void updateGameInfo() {
         timeProgressBar.setValue(timeRemaining);
-        timeProgressBar.setString("Thời gian: " + timeRemaining);
+        timeProgressBar.setString("Thời gian: " + timeRemaining + "s");
     }
     
     private void gameOver(boolean won) {
@@ -200,27 +200,26 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
 
         String message;
         if (won) {
-            win++; // Increment win count when player wins
-            checkDifficultyProgression(); // Check for level progression
+            win++;
+            checkDifficultyProgression();
             
-            message = "Chúc mừng! Bạn đã thắng!\n"
-                    + "Điểm số: " + score + "\n"
-                    + "Số bước đi: " + moves + "\n"
-                    + "Thời gian còn lại: " + timeRemaining + "s\n"
-                    + "Tổng số màn chơi thắng: " + win;
+            message = "CHÚC MỪNG BẠN ĐÃ THẮNG!\n"
+                    + "ĐIỂM SỐ: " + score + "\n"
+                    + "SỐ BƯỚC ĐI: " + moves + "\n"
+                    + "THỜI GIAN CÒN LẠI: " + timeRemaining + "s\n"
+                    + "TỔNG SỐ MÀN CHƠI THẮNG: " + win;
 
         }
         else {
-            message = "Game Over!\n"
-                    + "Hết thời gian rồi!\n"
-                    + "Điểm số cuối: " + score;
+            message = "GAME OVER!\n"
+                    + "HẾT THỜI GIAN RỒI!\n"
+                    + "ĐIỂM SỐ CUỐI: " + score;
         }
 
-        JOptionPane.showMessageDialog(this, message, won ? "Thắng!" : "Thua!",
+        JOptionPane.showMessageDialog(this, message, won ? "THẮNG!" : "THUA!",
                 won ? JOptionPane.INFORMATION_MESSAGE : JOptionPane.ERROR_MESSAGE);
 
         btnStart.setEnabled(true);
-        btnGenerate.setEnabled(true);
     }
     
     private void checkDifficultyProgression() {
@@ -282,7 +281,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         if (isValidPlayerMove(newRow, newCol)) {
             player.move(direction, maze.getRows(), maze.getCols());
             moves++;
-            score = Math.max(0, score - 1);
+            // score = Math.max(0, score - 1);
             
             checkCollectibles();
             
@@ -304,26 +303,13 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         for (Collectible collectible : collectibles) {
             if (collectible.isAt(player.getRow(), player.getCol())) {
                 collectible.collect();
-                score += 5;
+                int point = collectible.getPoints();
+                score += point;
+                
+                System.out.println("Thu thập đồng xu! Nhận được " + score + " điểm");
                 break;
             }
         }
-    }
-    
-    private Collectible findNearestCollectible() {
-        Collectible nearest = null;
-        int minDistance = Integer.MAX_VALUE;
-        
-        for (Collectible collectible : collectibles) {
-            if (!collectible.isCollected()) {
-                int distance = Math.abs(collectible.getRow() - player.getRow()) + Math.abs(collectible.getCol() - player.getCol());
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearest = collectible;
-                }
-            }
-        }
-        return nearest;
     }
     
     /**
@@ -338,7 +324,6 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         mazePanel = new javax.swing.JPanel();
         drawPanel = new javax.swing.JPanel();
         controlPanel = new javax.swing.JPanel();
-        btnGenerate = new javax.swing.JButton();
         btnReset = new javax.swing.JButton();
         btnStart = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
@@ -377,24 +362,16 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
 
         controlPanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        btnGenerate.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        btnGenerate.setText("Tạo mê cung");
-        btnGenerate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGenerateActionPerformed(evt);
-            }
-        });
-
-        btnReset.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        btnReset.setText("Reset");
+        btnReset.setFont(new java.awt.Font("Cascadia Code", 0, 16)); // NOI18N
+        btnReset.setText("RESET");
         btnReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnResetActionPerformed(evt);
             }
         });
 
-        btnStart.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        btnStart.setText("Bắt đầu");
+        btnStart.setFont(new java.awt.Font("Cascadia Code", 0, 16)); // NOI18N
+        btnStart.setText("BẮT ĐẦU");
         btnStart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnStartActionPerformed(evt);
@@ -402,25 +379,25 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         });
 
         btnExit.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
-        btnExit.setText("Thoát");
+        btnExit.setText("THOÁT");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExitActionPerformed(evt);
             }
         });
 
-        btnHint.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        btnHint.setText("Gợi ý");
+        btnHint.setFont(new java.awt.Font("Cascadia Code", 0, 16)); // NOI18N
+        btnHint.setText("GỢI Ý");
         btnHint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnHintActionPerformed(evt);
             }
         });
 
-        lblTimer.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblTimer.setFont(new java.awt.Font("Cascadia Code", 1, 16)); // NOI18N
         lblTimer.setText("Thời gian");
 
-        timeProgressBar.setFont(new java.awt.Font("Segoe UI", 0, 12)); // NOI18N
+        timeProgressBar.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         timeProgressBar.setMaximum(120);
         timeProgressBar.setValue(120);
         timeProgressBar.setString("Thời gian: 120s");
@@ -434,18 +411,13 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
                 .addContainerGap()
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnExit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(controlPanelLayout.createSequentialGroup()
-                        .addComponent(btnGenerate, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
-                        .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(controlPanelLayout.createSequentialGroup()
-                        .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnHint, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(timeProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
+                    .addComponent(btnReset, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnStart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(controlPanelLayout.createSequentialGroup()
                         .addComponent(lblTimer)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(timeProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnHint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         controlPanelLayout.setVerticalGroup(
@@ -456,14 +428,12 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(timeProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
-                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnGenerate, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(151, 151, 151)
-                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnHint, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 295, Short.MAX_VALUE)
+                .addComponent(btnReset, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnStart, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnHint, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 395, Short.MAX_VALUE)
                 .addComponent(btnExit, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -492,28 +462,12 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnGenerateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerateActionPerformed
-        // TODO add your handling code here:
-        try {
-            playerRow = 0;
-            playerCol = 0;
-            gameStarted = false;
-            hintUsed = false;
-            maze = new MazeGenerator(size, size, wallImgPath, floorImgPath, startImgPath, exitImgPath);
-            drawPanel.setPreferredSize(new Dimension(size * cellSize, size * cellSize));
-            mazePanel.revalidate();
-            mazePanel.repaint();
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this,"Lỗi tải ảnh","Error",JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_btnGenerateActionPerformed
-
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         // TODO add your handling code here:
         int choice = JOptionPane.showConfirmDialog(
             this, 
-            "Bạn có muốn reset game không?\nTất cả tiến trình sẽ bị mất!", 
-            "Xác nhận reset", 
+            "BẠN CÓ MUỐN RESET GAME KHÔNG?\nTẤT CẢ TIẾN TRÌNH SẼ BỊ MẤT!", 
+            "", 
             JOptionPane.YES_NO_OPTION
         );
         
@@ -533,24 +487,32 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
             collectibles.clear();
 
             btnStart.setEnabled(true);
-            btnGenerate.setEnabled(true);
 
             updateGameInfo();
             drawPanel.repaint();
             
-            JOptionPane.showMessageDialog(this, "Game đã được reset!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "GAME ĐÃ ĐƯỢC RESET!", "THÔNG BÁO", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
         // TODO add your handling code here:
         if (maze == null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng tạo mê cung trước!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-            return;
+            try {
+                playerRow = 0;
+                playerCol = 0;
+                maze = new MazeGenerator(size, size, wallImgPath, floorImgPath, startImgPath, exitImgPath);
+                drawPanel.setPreferredSize(new Dimension(size * cellSize, size * cellSize));
+                mazePanel.revalidate();
+                mazePanel.repaint();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "LỖI TẢI ẢNH", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }
         
         if (gameStarted) {
-            JOptionPane.showMessageDialog(this, "Game đã được bắt đầu!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "GAME ĐÃ ĐƯỢC BẮT ĐẦU!", "THÔNG BÁO", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         
@@ -567,7 +529,6 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         startGameTimer();
 
         btnStart.setEnabled(false);
-        btnGenerate.setEnabled(false);
 
         updateGameInfo();
         drawPanel.repaint();
@@ -576,9 +537,9 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         
         JOptionPane.showMessageDialog(
             this, 
-            "Game bắt đầu!\nSử dụng các phím mũi tên để di chuyển\n" +
-            "Tìm đường đến cửa ra trong thời gian quy định!",
-            "Bắt đầu game",
+            "GAME BẮT ĐẦU!\nSỬ DỤNG CÁC PHÍM MŨI TÊN ĐỂ DI CHUYỂN\n" +
+            "TÌM ĐƯỜNG ĐẾN CỬA RA TRONG THỜI GIAN QUY ĐỊNH!",
+            "",
             JOptionPane.INFORMATION_MESSAGE
         );
     }//GEN-LAST:event_btnStartActionPerformed
@@ -587,7 +548,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         // TODO add your handling code here:
         int choice = JOptionPane.showConfirmDialog(
             this,
-            "Bạn có thoát khỏi trò chơi?","Xác nhận thoát",
+            "BẠN MUỐN THOÁT KHỎI TRÒ CHƠI","XÁC NHẬN",
             JOptionPane.YES_NO_OPTION
         );
     
@@ -600,17 +561,17 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     private void btnHintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHintActionPerformed
         // TODO add your handling code here:
         if (!gameStarted) {
-            JOptionPane.showMessageDialog(this, "Vui lòng bắt đầu game trước!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "VUI LÒNG BẮT ĐẦU GAME TRƯỚC!", "THÔNG BÁO", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (hintUsed) {
-            JOptionPane.showMessageDialog(this, "Bạn đã hết lượt sử dụng gợi ý!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "BẠN ĐÃ SỬ DỤNG GỢI Ý!", "THÔNG BÁO", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
         if (gameWon) {
-            JOptionPane.showMessageDialog(this, "Game đã kết thúc!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "GAME KẾT THÚC!", "THÔNG BÁO", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -622,14 +583,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         List<PathFinder.Node> path = pathFinder.findPath();
         
         if (path.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy đường đi!", "Thông báo", JOptionPane.ERROR_MESSAGE);
-        }
-        else {
-            JOptionPane.showMessageDialog(
-                this,
-                "Gợi ý đã được hiển thị!\nĐường đi đến lối ra được tô sáng.\n(Trừ 10 điểm)", 
-                "Gợi ý", JOptionPane.INFORMATION_MESSAGE
-            );
+            JOptionPane.showMessageDialog(this, "KHÔNG TÌM THẤY ĐƯỜNG ĐI!", "THÔNG BÁO", JOptionPane.ERROR_MESSAGE);
         }
         
         updateGameInfo();
@@ -674,7 +628,6 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExit;
-    private javax.swing.JButton btnGenerate;
     private javax.swing.JButton btnHint;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnStart;
