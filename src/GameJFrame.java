@@ -186,8 +186,8 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     }
     
     private void updateGameInfo() {
-        timeProgressBar.setMaximum(initialTime);
         timeProgressBar.setValue(timeRemaining);
+        timeProgressBar.setString("Thời gian: " + timeRemaining);
     }
     
     private void gameOver(boolean won) {
@@ -207,14 +207,9 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
                     + "Điểm số: " + score + "\n"
                     + "Số bước đi: " + moves + "\n"
                     + "Thời gian còn lại: " + timeRemaining + "s\n"
-                    + "Tổng số màn chơi thắng: " + win + "\n"
-                    + "Cấp độ hiện tại: " + level;
+                    + "Tổng số màn chơi thắng: " + win;
 
-            if ((win - 1) % 5 == 0 && win > 1) { // Check if just leveled up
-                message += "\n\nChúc mừng! Bạn đã lên cấp độ " + level + "!\n"
-                        + "Độ khó đã tăng: thời gian giảm, xu nhiều hơn!";
-            }
-        } 
+        }
         else {
             message = "Game Over!\n"
                     + "Hết thời gian rồi!\n"
@@ -230,7 +225,6 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     
     private void checkDifficultyProgression() {
         if (win % 5 == 0 && win > 0) {
-            level++;
             initialTime = Math.max(10, initialTime - 10);
         }
     }
@@ -322,15 +316,13 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         
         for (Collectible collectible : collectibles) {
             if (!collectible.isCollected()) {
-                int distance = Math.abs(collectible.getRow() - player.getRow()) + 
-                              Math.abs(collectible.getCol() - player.getCol());
+                int distance = Math.abs(collectible.getRow() - player.getRow()) + Math.abs(collectible.getCol() - player.getCol());
                 if (distance < minDistance) {
                     minDistance = distance;
                     nearest = collectible;
                 }
             }
         }
-        
         return nearest;
     }
     
@@ -566,7 +558,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
         gameWon = false;
         score = 0;
         moves = 0;
-        timeRemaining = initialTime;
+        timeRemaining = 120;
         hintUsed = false;
         
         player = new Player(maze.getStartRow(), maze.getStartCol());
@@ -601,7 +593,7 @@ public class GameJFrame extends javax.swing.JFrame implements KeyListener {
     
         if (choice == JOptionPane.YES_OPTION) {
             this.setVisible(false);
-            new DangNhap().setVisible(true);
+            new Home().setVisible(true);
         }
     }//GEN-LAST:event_btnExitActionPerformed
 

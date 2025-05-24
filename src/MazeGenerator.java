@@ -85,8 +85,7 @@ public class MazeGenerator {
         }
 
         generateMaze();
-
-        // Ensure exit position is walkable
+        
         grid[exitRow][exitCol].value = 1;
 
         ensurePathToExit();
@@ -111,14 +110,14 @@ public class MazeGenerator {
         grid[startRow][startCol].value = 1;
         grid[exitRow][exitCol].value = 1;
 
-        dfs(startRow, startCol);
+        DFS(startRow, startCol);
 
         if (!grid[exitRow][exitCol].visited) {
             connectToMaze(exitRow, exitCol);
         }
     }
     
-    private void dfs(int r, int c) {
+    private void DFS(int r, int c) {
         grid[r][c].visited = true;
         grid[r][c].value = 1;
 
@@ -132,7 +131,7 @@ public class MazeGenerator {
 
             if (newR >= 0 && newR < rows && newC >= 0 && newC < cols && !grid[newR][newC].visited) {
                 grid[r + dir[0]/2][c + dir[1]/2].value = 1;
-                dfs(newR, newC);
+                DFS(newR, newC);
             }
         }
     }
@@ -168,7 +167,6 @@ public class MazeGenerator {
                 
                 if (r >= 0 && r < rows && c >= 0 && c < cols) {
                     grid[r][c].value = 1;
-                    
                     connectToMaze(r, c);
                     pathCreated = true;
                     break;
@@ -181,36 +179,30 @@ public class MazeGenerator {
         if (r < 0 || r >= rows || c < 0 || c >= cols) {
             return;
         }
-
-        // Mark this cell as walkable and visited
+        
         grid[r][c].value = 1;
         grid[r][c].visited = true;
 
         int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-
-        // Check if we're already connected to the maze
+        
         for (int[] dir : directions) {
             int newR = r + dir[0];
             int newC = c + dir[1];
 
             if (newR >= 0 && newR < rows && newC >= 0 && newC < cols
-                    && grid[newR][newC].value == 1 && grid[newR][newC].visited) {
-                return; // Already connected to visited maze
+                && grid[newR][newC].value == 1
+                && grid[newR][newC].visited) {
+                return;
             }
         }
-
-        // If not connected, create a path to connect
+        
         shuffleArray(directions);
         for (int[] dir : directions) {
-            int newR = r + dir[0];
-            int newC = c + dir[1];
+            int newR = r + dir[0], newC = c + dir[1];
 
             if (newR >= 0 && newR < rows && newC >= 0 && newC < cols) {
-                if (grid[newR][newC].visited) {
-                    // Found connection to existing maze
-                    return;
-                } else {
-                    // Create path towards maze
+                if (grid[newR][newC].visited) return;
+                else {
                     grid[newR][newC].value = 1;
                     connectToMaze(newR, newC);
                     return;
